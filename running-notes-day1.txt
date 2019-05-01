@@ -517,3 +517,172 @@ sorted(iterable, /, *, key=None, reverse=False)
     reverse flag can be set to request the result in descending order.
 
 >>> 
+
+--------------------------------------------------------------------------------------------
+Dictionary
+--------------------------------------------------------------------------------------------
+>>> a_d = { "name": "Aditya", "email":"sp.aditya@gmail.com"}
+>>> len(a_d)
+2
+>>> a_d['name']
+'Aditya'
+>>> a_d['email']
+'sp.aditya@gmail.com'
+>>> a_d['city']
+Traceback (most recent call last):
+  File "<pyshell#300>", line 1, in <module>
+    a_d['city']
+KeyError: 'city'
+>>> a_d['city'] = 'Bangalore'
+>>> a_d
+{'name': 'Aditya', 'email': 'sp.aditya@gmail.com', 'city': 'Bangalore'}
+>>> a_d['city']
+'Bangalore'
+>>> a_d['city'] = 'London'
+>>> a_d
+{'name': 'Aditya', 'email': 'sp.aditya@gmail.com', 'city': 'London'}
+>>> a_d['phone'] = ['12038002813', '19208301']
+>>> a_d
+{'name': 'Aditya', 'email': 'sp.aditya@gmail.com', 'city': 'London', 'phone': ['12038002813', '19208301']}
+>>> a_d['phone'][-1]
+'19208301'
+>>> a_d['address'] = {'home': 'aldskjf lasjfow', 'work': 'asdljfow osjdf'}
+>>> a_d
+{'name': 'Aditya', 'email': 'sp.aditya@gmail.com', 'city': 'London', 'phone': ['12038002813', '19208301'], 'address': {'home': 'aldskjf lasjfow', 'work': 'asdljfow osjdf'}}
+>>> a_d['address']['work']
+'asdljfow osjdf'
+>>> data = {"Search":[{"Title":"Batman Begins","Year":"2005","imdbID":"tt0372784","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BZmUwNGU2ZmItMmRiNC00MjhlLTg5YWUtODMyNzkxODYzMmZlXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_SX300.jpg"},{"Title":"Batman v Superman: Dawn of Justice","Year":"2016","imdbID":"tt2975590","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BYThjYzcyYzItNTVjNy00NDk0LTgwMWQtYjMwNmNlNWJhMzMyXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"},{"Title":"Batman","Year":"1989","imdbID":"tt0096895","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BMTYwNjAyODIyMF5BMl5BanBnXkFtZTYwNDMwMDk2._V1_SX300.jpg"},{"Title":"Batman Returns","Year":"1992","imdbID":"tt0103776","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BOGZmYzVkMmItM2NiOS00MDI3LWI4ZWQtMTg0YWZkODRkMmViXkEyXkFqcGdeQXVyODY0NzcxNw@@._V1_SX300.jpg"},{"Title":"Batman Forever","Year":"1995","imdbID":"tt0112462","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BNWY3M2I0YzItNzA1ZS00MzE3LThlYTEtMTg2YjNiOTYzODQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"},{"Title":"Batman & Robin","Year":"1997","imdbID":"tt0118688","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BMGQ5YTM1NmMtYmIxYy00N2VmLWJhZTYtN2EwYTY3MWFhOTczXkEyXkFqcGdeQXVyNTA2NTI0MTY@._V1_SX300.jpg"},{"Title":"The Lego Batman Movie","Year":"2017","imdbID":"tt4116284","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BMTcyNTEyOTY0M15BMl5BanBnXkFtZTgwOTAyNzU3MDI@._V1_SX300.jpg"},{"Title":"Batman: The Animated Series","Year":"1992–1995","imdbID":"tt0103359","Type":"series","Poster":"https://m.media-amazon.com/images/M/MV5BOTM3MTRkZjQtYjBkMy00YWE1LTkxOTQtNDQyNGY0YjYzNzAzXkEyXkFqcGdeQXVyOTgwMzk1MTA@._V1_SX300.jpg"},{"Title":"Batman: Under the Red Hood","Year":"2010","imdbID":"tt1569923","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BYTdlODI0YTYtNjk5ZS00YzZjLTllZjktYmYzNWM4NmI5MmMxXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"},{"Title":"Batman: The Dark Knight Returns, Part 1","Year":"2012","imdbID":"tt2313197","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BMzIxMDkxNDM2M15BMl5BanBnXkFtZTcwMDA5ODY1OQ@@._V1_SX300.jpg"}],"totalResults":"363","Response":"True"}
+>>> type(data)
+<class 'dict'>
+>>> data.keys()
+dict_keys(['Search', 'totalResults', 'Response'])
+>>> type(data['Search'])
+<class 'list'>
+>>> len(data['Search'])
+10
+>>> type(data['Search'][0])
+<class 'dict'>
+>>> data['Search'][0].keys()
+dict_keys(['Title', 'Year', 'imdbID', 'Type', 'Poster'])
+>>> data['Search'][0]['Title']
+'Batman Begins'
+>>> for movie in data['Search']:
+	print(movie['Title'], "is a ", movie['Type'])
+
+	
+Batman Begins is a  movie
+Batman v Superman: Dawn of Justice is a  movie
+Batman is a  movie
+Batman Returns is a  movie
+Batman Forever is a  movie
+Batman & Robin is a  movie
+The Lego Batman Movie is a  movie
+Batman: The Animated Series is a  series
+Batman: Under the Red Hood is a  movie
+Batman: The Dark Knight Returns, Part 1 is a  movie
+>>> #JSON - Java Script Object Notation
+>>> 
+>>> 
+>>> 
+>>> 
+----------------------------------------------------------------------------------------------
+Working with files
+----------------------------------------------------------------------------------------------
+>>> #1. write to files
+>>> fp = 'D:/training/Python/oracle/may1/f1.txt'
+>>> fp
+'D:/training/Python/oracle/may1/f1.txt'
+>>> fp = 'D:\\training\\Python\\oracle\\may1\\f1.txt'
+>>> fp = r'D:\training\Python\oracle\may1\f1.txt'
+>>> fh = open(fp, 'wt')
+>>> fh.write('write some content')
+18
+>>> fh.close()
+>>> fh.write('write some content')
+Traceback (most recent call last):
+  File "<pyshell#336>", line 1, in <module>
+    fh.write('write some content')
+ValueError: I/O operation on closed file.
+>>> fh = open(fp, 'at')
+>>> fh.write('write some more content')
+23
+>>> fh.close()
+>>> 
+>>> # Read the whole content of the file
+>>> fh = open(fp,'rt')
+>>> s = fh.read()
+>>> print(s)
+line1
+line2
+line3
+>>> s1 = fh.read()
+>>> print(s1)
+
+>>> fh.seek(0)
+0
+>>> s1 = fh.read()
+>>> print(s1)
+line1
+line2
+line3
+>>> fh.seek(0)
+0
+>>> li = fh.readlines()
+>>> print(li)
+['line1\n', 'line2\n', 'line3']
+>>> fh.seek(0)
+0
+>>> for line in fh:
+	print(line)
+
+	
+line1
+
+line2
+
+line3
+>>> fh.close()
+>>> for line in fh:
+	print(line.strip())
+
+	
+Traceback (most recent call last):
+  File "<pyshell#359>", line 1, in <module>
+    for line in fh:
+ValueError: I/O operation on closed file.
+>>> fh = open(fp,'rt')
+>>> for line in fh:
+	print(line.strip())
+
+	
+line1
+line2
+line3
+>>> for line in fh:
+	print(line,end=None)
+
+	
+>>> fh.seek(0)
+0
+>>> for line in fh:
+	print(line,end=None)
+
+	
+line1
+
+line2
+
+line3
+>>> for line in fh:
+	print(line,end='')
+
+	
+>>> fh.seek(0)
+0
+>>> for line in fh:
+	print(line,end='')
+
+	
+line1
+line2
+line3
