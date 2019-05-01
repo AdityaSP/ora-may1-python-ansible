@@ -292,3 +292,96 @@ TypeError: can only concatenate str (not "int") to str
 >>> next_ip
 '169.120.45.68'
 >>> 
+------------------------------------------------------------------------------------------
+Control structures
+------------------------------------------------------------------------------------------
+>>> a = 5
+>>> if a < 10:
+	print("Single digit")
+
+	
+Single digit
+>>> a < 10
+True
+>>> a = 15
+>>> if a < 10:
+	print("Single digit")
+
+	
+>>> a < 10
+False
+>>> if a < 10:
+	print("Single digit")
+else:
+	print("May be double digit")
+
+	
+May be double digit
+>>> if a < 10:
+	print("Single digit")
+elif a < 100:
+	print("2 digits")
+else:
+	print("2 + digits")
+
+	
+2 digits
+>>> x = 3
+>>> y = 7
+>>> x > 2 and x < y
+True
+>>> x < 3 or x < y
+True
+>>> 2 < x < 10
+True
+>>> 2 < x < y < 10
+True
+>>> import random
+>>> random.randint(0,100)
+44
+>>> random.randint(0,100)
+56
+>>> 
+>>> 
+>>> 
+>>> li
+['169', '120', '45', '68']
+>>> li = ['USD', 'BP', 'INR']
+>>> count = 0
+>>> while count < len(li):
+	print(li[count])
+	count = count + 1
+
+	
+USD
+BP
+INR
+>>> while count < len(li):
+	print(li[count])
+	count = count + 1
+
+	
+>>> count = 0
+>>> while count < len(li):
+	print(li[count])
+	count = count + 1
+
+	
+USD
+BP
+INR
+>>> for cur in li:
+	print(cur)
+
+	
+USD
+BP
+INR
+>>> for cur in li:
+	print(cur)
+
+	
+USD
+BP
+INR
+>>> 
