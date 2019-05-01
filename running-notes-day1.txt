@@ -54,3 +54,101 @@ Hello World
 0.75
 >>> if a/b == 0:
 	print("Launch Rocket")
+
+
+-------------------------------------------------------------------------------------------------------
+Strings
+-------------------------------------------------------------------------------------------------------
+>>> s = 'Hello World'
+>>> len(s)
+11
+>>> s[0]
+'H'
+>>> s[9]
+'l'
+>>> s[10]
+'d'
+>>> s[11]
+Traceback (most recent call last):
+  File "<pyshell#40>", line 1, in <module>
+    s[11]
+IndexError: string index out of range
+>>> s[-1]
+'d'
+>>> s
+'Hello World'
+>>> s[-1]
+'d'
+>>> s[-11]
+'H'
+>>> s[-12]
+Traceback (most recent call last):
+  File "<pyshell#45>", line 1, in <module>
+    s[-12]
+IndexError: string index out of range
+>>> s
+'Hello World'
+>>> s[0:4]
+'Hell'
+>>> s[0:5]
+'Hello'
+>>> s[:5]
+'Hello'
+>>> s[7:100]
+'orld'
+>>> s[7:]
+'orld'
+>>> s[:]
+'Hello World'
+>>> #s[<start>:<end>:<stepper>]
+>>> s[0:30:1]
+'Hello World'
+>>> s[0:30:2]
+'HloWrd'
+>>> s[::]
+'Hello World'
+>>> s[::-1]
+'dlroW olleH'
+>>> 
+>>> 
+>>> 
+>>> s
+'Hello World'
+>>> s + " Again"
+'Hello World Again'
+>>> s
+'Hello World'
+>>> s1 = s + ' Again'
+>>> s1
+'Hello World Again'
+>>> s
+'Hello World'
+>>> a
+3
+>>> a + 5
+8
+>>> a
+3
+>>> c = a + 5
+>>> s
+'Hello World'
+>>> s + 5
+Traceback (most recent call last):
+  File "<pyshell#72>", line 1, in <module>
+    s + 5
+TypeError: can only concatenate str (not "int") to str
+>>> age = 20
+>>> s = 'My age is '
+>>> s + age
+Traceback (most recent call last):
+  File "<pyshell#75>", line 1, in <module>
+    s + age
+TypeError: can only concatenate str (not "int") to str
+>>> s + str(age)
+'My age is 20'
+>>> s = 'Hello'
+>>> s * 5
+'HelloHelloHelloHelloHello'
+>>> print('-' * 50)
+--------------------------------------------------
+>>> 
