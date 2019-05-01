@@ -152,3 +152,143 @@ TypeError: can only concatenate str (not "int") to str
 >>> print('-' * 50)
 --------------------------------------------------
 >>> 
+
+-------------------------------------------------------------------------------------
+Lists
+-------------------------------------------------------------------------------------
+>>> s
+'Hello'
+>>> li = ['India', 'USA','China','Japan']
+>>> len(li)
+4
+>>> li[0]
+'India'
+>>> li[3]
+'Japan'
+>>> li[4]
+Traceback (most recent call last):
+  File "<pyshell#89>", line 1, in <module>
+    li[4]
+IndexError: list index out of range
+>>> li[-4]
+'India'
+>>> li[-5]
+Traceback (most recent call last):
+  File "<pyshell#91>", line 1, in <module>
+    li[-5]
+IndexError: list index out of range
+>>> li
+['India', 'USA', 'China', 'Japan']
+>>> li[:3]
+['India', 'USA', 'China']
+>>> li[2:]
+['China', 'Japan']
+>>> li[::-1]
+['Japan', 'China', 'USA', 'India']
+>>> s = 'Hello'
+>>> id(s)
+51086688
+>>> s = s + ' Again'
+>>> s
+'Hello Again'
+>>> id(s)
+51140992
+>>> li
+['India', 'USA', 'China', 'Japan']
+>>> id(li)
+42795736
+>>> li[3]='JPN'
+>>> li
+['India', 'USA', 'China', 'JPN']
+>>> id(li)
+42795736
+>>> li.append('Mexico')
+>>> li
+['India', 'USA', 'China', 'JPN', 'Mexico']
+>>> len(li)
+5
+>>> id(li)
+42795736
+>>> l2 = ['Brazil','Canada']
+>>> li.extend(l2)
+>>> li
+['India', 'USA', 'China', 'JPN', 'Mexico', 'Brazil', 'Canada']
+>>> len(li)
+7
+>>> li.insert(2, 'UK')
+>>> li
+['India', 'USA', 'UK', 'China', 'JPN', 'Mexico', 'Brazil', 'Canada']
+>>> li.insert(-1, 'Cuba')
+>>> li
+['India', 'USA', 'UK', 'China', 'JPN', 'Mexico', 'Brazil', 'Cuba', 'Canada']
+>>> 
+>>> 
+>>> 
+>>> li.remove('JPN')
+>>> li
+['India', 'USA', 'UK', 'China', 'Mexico', 'Brazil', 'Cuba', 'Canada']
+>>> a
+3
+>>> del a
+>>> a
+Traceback (most recent call last):
+  File "<pyshell#125>", line 1, in <module>
+    a
+NameError: name 'a' is not defined
+>>> del li[-3]
+>>> li
+['India', 'USA', 'UK', 'China', 'Mexico', 'Cuba', 'Canada']
+>>> li.pop()
+'Canada'
+>>> li
+['India', 'USA', 'UK', 'China', 'Mexico', 'Cuba']
+>>> x = li.pop()
+>>> li
+['India', 'USA', 'UK', 'China', 'Mexico']
+>>> x
+'Cuba'
+>>> li.pop(2)
+'UK'
+>>> li
+['India', 'USA', 'China', 'Mexico']
+>>> 
+>>> 
+>>> s = '169:120:45:67'
+>>> s = '169.120.45.67'
+>>> type(s)
+<class 'str'>
+>>> li=s.split('.')
+>>> li
+['169', '120', '45', '67']
+>>> li[-1]
+'67'
+>>> li[-1] + 1
+Traceback (most recent call last):
+  File "<pyshell#143>", line 1, in <module>
+    li[-1] + 1
+TypeError: can only concatenate str (not "int") to str
+>>> int(li[-1]) + 1
+68
+>>> o4 = int(li[-1]) + 1
+>>> type(o4)
+<class 'int'>
+>>> li[-1] = str(o4)
+>>> li
+['169', '120', '45', '68']
+>>> next_ip = '.'.join(li)
+>>> next_ip
+'169.120.45.68'
+>>> type(next_ip)
+<class 'str'>
+>>> s
+'169.120.45.67'
+>>> s
+'169.120.45.67'
+>>> li = s.split('.')
+>>> li[-1] = str(int(li[-1]) +1)
+>>> li
+['169', '120', '45', '68']
+>>> next_ip = '.'.join(li)
+>>> next_ip
+'169.120.45.68'
+>>> 
