@@ -385,3 +385,135 @@ USD
 BP
 INR
 >>> 
+
+>>> False, 0, '', [], {}, None
+(False, 0, '', [], {}, None)
+>>> s = ''
+>>> if s == '':
+	print("String is empty")
+
+	
+String is empty
+>>> if not s:
+	print("String is empty")
+
+	
+String is empty
+>>> li
+['USD', 'BP', 'INR']
+>>> s
+''
+>>> s = 'Hello World'
+>>> 'BP' in li
+True
+>>> 'World' in s
+True
+---------------------------------------------------------------------------------------------
+Functions
+---------------------------------------------------------------------------------------------
+>>> def sayhi():
+	print("Hi")
+
+	
+>>> sayhi()
+Hi
+>>> def sayhi(name):
+	print("Hi", name)
+
+	
+>>> sayhi()
+Traceback (most recent call last):
+  File "<pyshell#244>", line 1, in <module>
+    sayhi()
+TypeError: sayhi() missing 1 required positional argument: 'name'
+>>> sayhi("Aditya")
+Hi Aditya
+>>> def add(x, y):
+	print(x + y)
+
+	
+>>> add(9,20)
+29
+>>> c = add(9,20)
+29
+>>> c
+>>> def add(x, y):
+	return x + y
+
+>>> c = add(9,20)
+>>> c + 10
+39
+>>> add(add(9,20),30)
+59
+>>> def full_name(fn , ln, title):
+	return title + "." + fn + " " + ln
+
+>>> full_name('Mark', 'Twain', 'Mr')
+'Mr.Mark Twain'
+>>> def full_name(fn , ln, title='Mr'):
+	return title + "." + fn + " " + ln
+
+>>> full_name('Mark', 'Twain')
+'Mr.Mark Twain'
+>>> 
+>>> 
+>>> full_name('Aditya', 'Prabhakara', 'Dr')
+'Dr.Aditya Prabhakara'
+>>> full_name(fn='Aditya', ln='Prabhakara', title='Dr')
+'Dr.Aditya Prabhakara'
+>>> # calling a function through positional arguments
+>>> full_name('Aditya', 'Prabhakara', 'Dr')
+'Dr.Aditya Prabhakara'
+>>> # calling a function through key-word based arguments
+>>> full_name(fn='Aditya', ln='Prabhakara', title='Dr')
+'Dr.Aditya Prabhakara'
+>>> full_name(title='Dr', ln='Prabhakara', fn='Aditya' )
+'Dr.Aditya Prabhakara'
+>>> full_name('Dr', 'Prabhakara', 'Aditya' )
+'Aditya.Dr Prabhakara'
+>>> full_name(ln='Prabhakara', fn='Aditya' )
+'Mr.Aditya Prabhakara'
+>>> li
+['USD', 'BP', 'INR']
+>>> sorted(li)
+['BP', 'INR', 'USD']
+>>> sorted(li, reverse=True)
+['USD', 'INR', 'BP']
+>>> 
+>>> 
+>>> len.__doc__
+'Return the number of items in a container.'
+>>> type.__doc__
+"type(object_or_name, bases, dict)\ntype(object) -> the object's type\ntype(name, bases, dict) -> a new type"
+>>> sayhi.__doc__
+>>> def sayhi(name):
+	'sayhi(name)--> prints a cheerful message on the console'
+	print("Hi", name)
+
+	
+>>> sayhi.__doc__
+'sayhi(name)--> prints a cheerful message on the console'
+>>> help(len)
+Help on built-in function len in module builtins:
+
+len(obj, /)
+    Return the number of items in a container.
+
+>>> help(sayhi)
+Help on function sayhi in module __main__:
+
+sayhi(name)
+    sayhi(name)--> prints a cheerful message on the console
+
+>>> sorted.__doc__
+'Return a new list containing all items from the iterable in ascending order.\n\nA custom key function can be supplied to customize the sort order, and the\nreverse flag can be set to request the result in descending order.'
+>>> help(sorted)
+Help on built-in function sorted in module builtins:
+
+sorted(iterable, /, *, key=None, reverse=False)
+    Return a new list containing all items from the iterable in ascending order.
+    
+    A custom key function can be supplied to customize the sort order, and the
+    reverse flag can be set to request the result in descending order.
+
+>>> 
