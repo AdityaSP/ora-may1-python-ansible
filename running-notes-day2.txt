@@ -832,3 +832,388 @@ vagrant@anscontrol:~/may1$ cat variables.yml
       msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
 vagrant@anscontrol:~/may1$
 
+----------------------------------------------------------------------------------
+vagrant@anscontrol:~/may1$ ansible web -m setup > /tmp/output.txt
+vagrant@anscontrol:~/may1$ vi /tmp/output.txt
+vagrant@anscontrol:~/may1$ cp /tmp/output.txt /vagrant/
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml --extra-vars="VAR_TWO=commandline"
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is commandline, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=4    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml --extra-vars="VAR_TWO=commandline"
+
+PLAY ***************************************************************************
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is commandline, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+fatal: [192.168.90.2]: FAILED! => {"failed": true, "msg": "ERROR! 'ansible_nodename' is undefined"}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=0    unreachable=0    failed=1
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml --extra-vars="VAR_TWO=commandline"
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is commandline, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=4    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml --extra-vars="APACHE_PORT=8081"
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=4    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg  helloworld.yml  hosts  variables.yml  vars.yml  web.yml
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat var
+cat: var: No such file or directory
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  gather_facts: yes
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  vars_files:
+  - vars.yml
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
+  - debug:
+      msg: "facts: {{ansible_nodename}} {{ansible_os_family}}"
+  - command: "echo hello"
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+changed: [192.168.90.2]
+ [WARNING]: Consider using service module rather than running service
+
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+changed: [192.168.90.2]
+ [WARNING]: Consider using service module rather than running service
+
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "output_var": {
+        "changed": true,
+        "cmd": [
+            "service",
+            "apache2",
+            "status"
+        ],
+        "delta": "0:00:00.030702",
+        "end": "2019-05-02 20:25:26.405433",
+        "rc": 0,
+        "start": "2019-05-02 20:25:26.374731",
+        "stderr": "",
+        "stdout": "● apache2.service - LSB: Apache2 web server\n   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)\n  Drop-In: /lib/systemd/system/apache2.service.d\n           └─apache2-systemd.conf\n   Active: active (running) since Thu 2019-05-02 19:55:56 UTC; 29min ago\n     Docs: man:systemd-sysv-generator(8)\n  Process: 19587 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)\n  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)\n    Tasks: 7\n   Memory: 13.7M\n      CPU: 262ms\n   CGroup: /system.slice/apache2.service\n           ├─19634 /usr/sbin/apache2 -k start\n           ├─19637 /usr/sbin/apache2 -k start\n           ├─19638 /usr/sbin/apache2 -k start\n           ├─19639 /usr/sbin/apache2 -k start\n           ├─19640 /usr/sbin/apache2 -k start\n           ├─19641 /usr/sbin/apache2 -k start\n           └─19645 /usr/sbin/apache2 -k start\n\nMay 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...\nMay 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2\nMay 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message\nMay 02 19:55:56 ansnode1 apache2[19617]:  *\nMay 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server.",
+        "stdout_lines": [
+            "● apache2.service - LSB: Apache2 web server",
+            "   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)",
+            "  Drop-In: /lib/systemd/system/apache2.service.d",
+            "           └─apache2-systemd.conf",
+            "   Active: active (running) since Thu 2019-05-02 19:55:56 UTC; 29min ago",
+            "     Docs: man:systemd-sysv-generator(8)",
+            "  Process: 19587 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)",
+            "  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)",
+            "    Tasks: 7",
+            "   Memory: 13.7M",
+            "      CPU: 262ms",
+            "   CGroup: /system.slice/apache2.service",
+            "           ├─19634 /usr/sbin/apache2 -k start",
+            "           ├─19637 /usr/sbin/apache2 -k start",
+            "           ├─19638 /usr/sbin/apache2 -k start",
+            "           ├─19639 /usr/sbin/apache2 -k start",
+            "           ├─19640 /usr/sbin/apache2 -k start",
+            "           ├─19641 /usr/sbin/apache2 -k start",
+            "           └─19645 /usr/sbin/apache2 -k start",
+            "",
+            "May 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...",
+            "May 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2",
+            "May 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message",
+            "May 02 19:55:56 ansnode1 apache2[19617]:  *",
+            "May 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server."
+        ],
+        "warnings": [
+            "Consider using service module rather than running service"
+        ]
+    }
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=6    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  gather_facts: yes
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  vars_files:
+  - vars.yml
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
+  - debug:
+      msg: "facts: {{ansible_nodename}} {{ansible_os_family}}"
+  - command: "service apache2 status"
+    become: true
+    register: output_var
+  - debug:
+      var: output_var
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+changed: [192.168.90.2]
+ [WARNING]: Consider using service module rather than running service
+
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "output_var.rc": "0"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=6    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+fatal: [192.168.90.2]: FAILED! => {"changed": true, "cmd": ["service", "apache2", "status"], "delta": "0:00:00.016248", "end": "2019-05-02 20:29:01.546537", "failed": true, "rc": 3, "start": "2019-05-02 20:29:01.530289", "stderr": "", "stdout": "● apache2.service - LSB: Apache2 web server\n   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)\n  Drop-In: /lib/systemd/system/apache2.service.d\n           └─apache2-systemd.conf\n   Active: inactive (dead) since Thu 2019-05-02 20:28:56 UTC; 5s ago\n     Docs: man:systemd-sysv-generator(8)\n  Process: 20429 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)\n  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)\n\nMay 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...\nMay 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2\nMay 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message\nMay 02 19:55:56 ansnode1 apache2[19617]:  *\nMay 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server.\nMay 02 20:28:55 ansnode1 systemd[1]: Stopping LSB: Apache2 web server...\nMay 02 20:28:55 ansnode1 apache2[20429]:  * Stopping Apache httpd web server apache2\nMay 02 20:28:56 ansnode1 apache2[20429]:  *\nMay 02 20:28:56 ansnode1 systemd[1]: Stopped LSB: Apache2 web server.", "stdout_lines": ["● apache2.service - LSB: Apache2 web server", "   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)", "  Drop-In: /lib/systemd/system/apache2.service.d", "           └─apache2-systemd.conf", "   Active: inactive (dead) since Thu 2019-05-02 20:28:56 UTC; 5s ago", "     Docs: man:systemd-sysv-generator(8)", "  Process: 20429 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)", "  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)", "", "May 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...", "May 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2", "May 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message", "May 02 19:55:56 ansnode1 apache2[19617]:  *", "May 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server.", "May 02 20:28:55 ansnode1 systemd[1]: Stopping LSB: Apache2 web server...", "May 02 20:28:55 ansnode1 apache2[20429]:  * Stopping Apache httpd web server apache2", "May 02 20:28:56 ansnode1 apache2[20429]:  *", "May 02 20:28:56 ansnode1 systemd[1]: Stopped LSB: Apache2 web server."], "warnings": ["Consider using service module rather than running service"]}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=4    changed=0    unreachable=0    failed=1
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "facts: ansnode1 Debian"
+}
+
+TASK [command] *****************************************************************
+fatal: [192.168.90.2]: FAILED! => {"changed": true, "cmd": ["service", "apache2", "status"], "delta": "0:00:00.034827", "end": "2019-05-02 20:31:31.751530", "failed": true, "rc": 3, "start": "2019-05-02 20:31:31.716703", "stderr": "", "stdout": "● apache2.service - LSB: Apache2 web server\n   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)\n  Drop-In: /lib/systemd/system/apache2.service.d\n           └─apache2-systemd.conf\n   Active: inactive (dead) since Thu 2019-05-02 20:28:56 UTC; 2min 35s ago\n     Docs: man:systemd-sysv-generator(8)\n  Process: 20429 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)\n  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)\n\nMay 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...\nMay 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2\nMay 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message\nMay 02 19:55:56 ansnode1 apache2[19617]:  *\nMay 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server.\nMay 02 20:28:55 ansnode1 systemd[1]: Stopping LSB: Apache2 web server...\nMay 02 20:28:55 ansnode1 apache2[20429]:  * Stopping Apache httpd web server apache2\nMay 02 20:28:56 ansnode1 apache2[20429]:  *\nMay 02 20:28:56 ansnode1 systemd[1]: Stopped LSB: Apache2 web server.", "stdout_lines": ["● apache2.service - LSB: Apache2 web server", "   Loaded: loaded (/etc/init.d/apache2; bad; vendor preset: enabled)", "  Drop-In: /lib/systemd/system/apache2.service.d", "           └─apache2-systemd.conf", "   Active: inactive (dead) since Thu 2019-05-02 20:28:56 UTC; 2min 35s ago", "     Docs: man:systemd-sysv-generator(8)", "  Process: 20429 ExecStop=/etc/init.d/apache2 stop (code=exited, status=0/SUCCESS)", "  Process: 19617 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)", "", "May 02 19:55:55 ansnode1 systemd[1]: Starting LSB: Apache2 web server...", "May 02 19:55:55 ansnode1 apache2[19617]:  * Starting Apache httpd web server apache2", "May 02 19:55:55 ansnode1 apache2[19617]: AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1. Set the 'ServerName' directive globally to suppress this message", "May 02 19:55:56 ansnode1 apache2[19617]:  *", "May 02 19:55:56 ansnode1 systemd[1]: Started LSB: Apache2 web server.", "May 02 20:28:55 ansnode1 systemd[1]: Stopping LSB: Apache2 web server...", "May 02 20:28:55 ansnode1 apache2[20429]:  * Stopping Apache httpd web server apache2", "May 02 20:28:56 ansnode1 apache2[20429]:  *", "May 02 20:28:56 ansnode1 systemd[1]: Stopped LSB: Apache2 web server."], "warnings": ["Consider using service module rather than running service"]}
+...ignoring
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "output_var.rc": "3"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=6    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$
+
