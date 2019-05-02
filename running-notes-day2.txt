@@ -547,4 +547,288 @@ vagrant@anscontrol:~/may1$ cat web.yml
       state: restarted
 
 vagrant@anscontrol:~/may1$
+------------------------------------------------------------------------------
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [print a variable] ********************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  vars:
+  - APACHE_PORT: 8080
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "Port is {{APACHE_PORT}}"
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Port is 8080"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Port is 8080, VAR_TWO is In playbook"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi vars.yml
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat vars.yml
+VAR_THREE: "From vars file"
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  vars_files:
+  - vars.yml
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is In playbook, VAR_THREE is From vars file"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi vars.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat var
+cat: var: No such file or directory
+vagrant@anscontrol:~/may1$ cat vars.yml
+VAR_TWO: "From vars file"
+VAR_THREE: "From vars file"
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  vars_files:
+  - vars.yml
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi variables.yml
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is From vars file, VAR_THREE is From vars file"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook variables.yml --extra-vars="VAR_TWO=commandline"
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+
+ok: [192.168.90.2]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "Hello There"
+}
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.2] => {
+    "msg": "VAR_TWO is commandline, VAR_THREE is From vars file"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+changed: [192.168.90.2]
+
+RUNNING HANDLER [Restart service] **********************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=2    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml --extra-vars="APACHE_PORT=8081"
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+changed: [192.168.90.2]
+
+RUNNING HANDLER [Restart service] **********************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=2    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  vars:
+  - APACHE_PORT: 80
+  become: true
+  tasks:
+  - name: "Install package"
+    apt:
+      name: "{{item}}"
+      update_cache: yes
+#      state: absent
+    with_items:
+    - apache2
+    - curl
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+  - name: "Change port"
+    lineinfile:
+      dest: /etc/apache2/ports.conf
+      regexp: "^Listen"
+      line: "Listen {{APACHE_PORT}}"
+    notify:
+    - "Restart service"
+  handlers:
+  - name: "Restart service"
+    service:
+      name: apache2
+      state: restarted
+
+vagrant@anscontrol:~/may1$ cat vars.yml
+VAR_TWO: "From vars file"
+VAR_THREE: "From vars file"
+vagrant@anscontrol:~/may1$ cat variables.yml
+- hosts: web
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  vars_files:
+  - vars.yml
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
+vagrant@anscontrol:~/may1$
 
