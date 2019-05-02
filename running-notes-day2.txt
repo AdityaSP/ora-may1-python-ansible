@@ -117,3 +117,179 @@ vagrant@anscontrol:~/may1$ cat hosts
 192.168.90.2
 192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
 vagrant@anscontrol:~/may1$
+
+
+
+----------------------------------------------------------------------------------------------
+
+vagrant@anscontrol:~/may1$ ansible all -m command -a "free -m"
+192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          52         200          12         235         395
+Swap:           979           0         979
+
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          47         217           3         222         410
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ ansible all -m command -a "touch /tmp/f1.txt"
+192.168.90.2 | SUCCESS | rc=0 >>
+
+
+192.168.90.3 | SUCCESS | rc=0 >>
+
+
+vagrant@anscontrol:~/may1$ ansible all -m command -a "ls -ltr /tmp/f1.txt"
+192.168.90.2 | SUCCESS | rc=0 >>
+-rw-rw-r-- 1 vagrant vagrant 0 May  2 17:08 /tmp/f1.txt
+
+192.168.90.3 | SUCCESS | rc=0 >>
+-rw-rw-r-- 1 vagrant vagrant 0 May  2 17:08 /tmp/f1.txt
+
+vagrant@anscontrol:~/may1$ ansible all -m command -a "sudo service tomcat status"
+192.168.90.2 | FAILED | rc=3 >>
+● tomcat.service
+   Loaded: not-found (Reason: No such file or directory)
+   Active: inactive (dead)
+
+192.168.90.3 | FAILED | rc=3 >>
+● tomcat.service
+   Loaded: not-found (Reason: No such file or directory)
+   Active: inactive (dead)
+
+vagrant@anscontrol:~/may1$ vi hosts
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible all -m command -a "sudo service tomcat status"
+192.168.90.2 | FAILED | rc=3 >>
+● tomcat.service
+   Loaded: not-found (Reason: No such file or directory)
+   Active: inactive (dead)
+
+192.168.90.3 | FAILED | rc=3 >>
+● tomcat.service
+   Loaded: not-found (Reason: No such file or directory)
+   Active: inactive (dead)
+
+vagrant@anscontrol:~/may1$ ansible all -m command -a "free -m"                  192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          52         199          12         235         395
+Swap:           979           0         979
+
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          47         217           3         222         409
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ #ansible  -m command -a "free -m"
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat hosts
+[web]
+192.168.90.2
+
+[db]
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+[nodes]
+192.168.90.2
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+vagrant@anscontrol:~/may1$ ansible web -m command -a "free -m"
+192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          52         199          12         235         395
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ ansible db -m command -a "free -m"
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          47         217           3         222         409
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ ansible nodes -m command -a "free -m"
+192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          53         199          12         235         395
+Swap:           979           0         979
+
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          47         217           3         222         409
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ ansible nodes -m shell -a "free -m"
+192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          52         199          12         235         395
+Swap:           979           0         979
+
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          47         217           3         222         410
+Swap:           979           0         979
+
+vagrant@anscontrol:~/may1$ ansible nodes -m raw -a "free -m"
+192.168.90.2 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          46         205          12         235         401
+Swap:           979           0         979
+
+
+192.168.90.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:            488          41         223           3         222         416
+Swap:           979           0         979
+
+
+vagrant@anscontrol:~/may1$ vi helloworld.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat helloworld.yml
+
+- hosts: all
+  tasks:
+  - name: "Create a file"
+    file:
+      path: /tmp/f1.txt
+vagrant@anscontrol:~/may1$ vi helloworld.yml
+vagrant@anscontrol:~/may1$ ansible-playbook helloworld.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Create a file] ***********************************************************
+fatal: [192.168.90.3]: FAILED! => {"changed": false, "failed": true, "msg": "file (/tmp/fromansible.txt) is absent, cannot continue", "path": "/tmp/fromansible.txt", "state": "absent"}
+fatal: [192.168.90.2]: FAILED! => {"changed": false, "failed": true, "msg": "file (/tmp/fromansible.txt) is absent, cannot continue", "path": "/tmp/fromansible.txt", "state": "absent"}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=0    unreachable=0    failed=1
+192.168.90.3               : ok=1    changed=0    unreachable=0    failed=1
+
+vagrant@anscontrol:~/may1$ vi helloworld.yml
+vagrant@anscontrol:~/may1$ ansible-playbook helloworld.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Create a file] ***********************************************************
+changed: [192.168.90.2]
+changed: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat helloworld.yml
+- hosts: all
+  tasks:
+  - name: "Create a file"
+    file:
+      path: /tmp/fromansible.txt
+      state: touch
+vagrant@anscontrol:~/may1$ vi helloworld.yml
+vagrant@anscontrol:~/may1$
