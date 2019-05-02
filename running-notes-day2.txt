@@ -472,3 +472,79 @@ vagrant@anscontrol:~/may1$ cat web.yml
       state: started
       enabled: yes
 vagrant@anscontrol:~/may1$
+
+---------------------------------------------------------------------------------
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+changed: [192.168.90.2]
+
+TASK [Restart service] *********************************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=2    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+ok: [192.168.90.2]
+
+TASK [Restart service] *********************************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=5    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  become: true
+  tasks:
+  - name: "Install package"
+    apt:
+      name: "{{item}}"
+      update_cache: yes
+#      state: absent
+    with_items:
+    - apache2
+    - curl
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+  - name: "Change port"
+    lineinfile:
+      dest: /etc/apache2/ports.conf
+      regexp: "^Listen"
+      line: "Listen 9090"
+  - name: "Restart service"
+    service:
+      name: apache2
+      state: restarted
+
+vagrant@anscontrol:~/may1$
+
