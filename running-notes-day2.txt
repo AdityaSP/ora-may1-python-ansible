@@ -1,0 +1,119 @@
+login as: vagrant
+vagrant@192.168.90.10's password:
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-131-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+76 packages can be updated.
+54 updates are security updates.
+
+
+Last login: Thu Apr  4 05:31:27 2019 from 192.168.90.1
+vagrant@anscontrol:~$ ssh 192.168.90.2
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-131-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+80 packages can be updated.
+56 updates are security updates.
+
+
+Last login: Thu Apr  4 08:54:13 2019 from 192.168.90.10
+vagrant@ansnode1:~$ exit
+logout
+Connection to 192.168.90.2 closed.
+vagrant@anscontrol:~$
+vagrant@anscontrol:~$ ping 192.168.90.2
+PING 192.168.90.2 (192.168.90.2) 56(84) bytes of data.
+64 bytes from 192.168.90.2: icmp_seq=1 ttl=64 time=0.520 ms
+64 bytes from 192.168.90.2: icmp_seq=2 ttl=64 time=0.413 ms
+^C
+--- 192.168.90.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.413/0.466/0.520/0.057 ms
+vagrant@anscontrol:~$ ping 192.168.90.3
+PING 192.168.90.3 (192.168.90.3) 56(84) bytes of data.
+64 bytes from 192.168.90.3: icmp_seq=1 ttl=64 time=0.491 ms
+64 bytes from 192.168.90.3: icmp_seq=2 ttl=64 time=0.417 ms
+^C
+--- 192.168.90.3 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.417/0.454/0.491/0.037 ms
+vagrant@anscontrol:~$ ls
+apr1  demo  mar18
+vagrant@anscontrol:~$
+vagrant@anscontrol:~$ mkdir may1
+vagrant@anscontrol:~$ cd may1
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+vagrant@anscontrol:~/may1$ vi hosts
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat hosts
+192.168.90.2
+192.168.90.3
+vagrant@anscontrol:~/may1$ cp /etc/ansible/ansible.cfg .
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg  hosts
+vagrant@anscontrol:~/may1$ vi ansible.cfg
+vagrant@anscontrol:~/may1$ cat ansible.cfg
+[defaults]
+inventory      = hosts
+vagrant@anscontrol:~/may1$ pwd
+/home/vagrant/may1
+vagrant@anscontrol:~/may1$ vi ansible.cfg
+vagrant@anscontrol:~/may1$ cat hosts
+192.168.90.2
+192.168.90.3
+vagrant@anscontrol:~/may1$ ansible --list-hosts all
+  hosts (2):
+    192.168.90.2
+    192.168.90.3
+vagrant@anscontrol:~/may1$ ansible all -m ping
+192.168.90.3 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "ERROR! SSH encountered an unknown error during the connection. We recommend you re-run the command using -vvvv, which will enable SSH debugging output to help diagnose the issue",
+    "unreachable": true
+}
+192.168.90.2 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+vagrant@anscontrol:~/may1$ vi hosts
+vagrant@anscontrol:~/may1$ ansible all -m ping
+192.168.90.2 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+192.168.90.3 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+vagrant@anscontrol:~/may1$ vi hosts
+vagrant@anscontrol:~/may1$ ssh ansnode1
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-131-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+80 packages can be updated.
+56 updates are security updates.
+
+
+Last login: Thu May  2 16:25:58 2019 from 192.168.90.10
+vagrant@ansnode1:~$ exit
+logout
+Connection to ansnode1 closed.
+vagrant@anscontrol:~/may1$ ssh ansnode2
+vagrant@ansnode2's password:
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi hosts
+vagrant@anscontrol:~/may1$ cat hosts
+192.168.90.2
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+vagrant@anscontrol:~/may1$
