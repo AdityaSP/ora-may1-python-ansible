@@ -1,0 +1,12 @@
+- hosts: web
+  become: true
+  gather_facts: no
+  tasks:
+  - name: "collect status"
+    command: "service apache2 status"
+    ignore_errors: true
+    register: output
+
+  - name: "start apache2"
+    command: "service apache2 start"
+    when: output.rc != 0 and 'inactive' in output.stdout

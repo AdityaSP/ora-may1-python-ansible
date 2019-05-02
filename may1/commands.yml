@@ -1,0 +1,10 @@
+- hosts: ctrl
+  gather_facts: no
+  tasks:
+  - command: "date"
+  - debug:
+      var: output.stdout
+
+#  - shell: "date > /tmp/shell_date.txt"
+
+#  - raw: "date>/tmp/raw_date.txt"

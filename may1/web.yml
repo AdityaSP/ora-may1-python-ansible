@@ -1,3 +1,21 @@
+- hosts: ctrl       
+  gather_facts: no
+  tasks:
+  - name: "Update cache"
+    become: yes
+    apt:
+     update_cache: yes
+     cache_valid_time: 36000
+  - name: "Install package"
+    become: yes
+    apt:
+      name: git 
+      update_cache: no
+  - name: "Checkout"
+    git:
+      repo: "https://github.com/AdityaSP/htmlonly"
+      dest: "/tmp/code"
+
 - hosts: web
   gather_facts: no
   vars:
@@ -27,9 +45,15 @@
       line: "Listen {{APACHE_PORT}}"
     notify:
     - "Restart service"
+  - name: "Deploy code"
+    copy:
+      src: /tmp/code/mypage.html
+      dest: /var/www/html/mypage.html
+
   handlers:
   - name: "Restart service"
     service:
       name: apache2
       state: restarted
-      
+
+
