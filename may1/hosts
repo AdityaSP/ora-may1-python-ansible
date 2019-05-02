@@ -1,0 +1,10 @@
+[web]
+192.168.90.2
+
+[db]
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+[nodes]
+192.168.90.2
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+

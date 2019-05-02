@@ -1,0 +1,31 @@
+- hosts: web
+  vars:
+  - APACHE_PORT: 80
+  become: true
+  tasks:
+  - name: "Install package"
+    apt:
+      name: "{{item}}"
+      update_cache: yes
+#      state: absent
+    with_items:
+    - apache2
+    - curl
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+  - name: "Change port"
+    lineinfile:
+      dest: /etc/apache2/ports.conf
+      regexp: "^Listen"
+      line: "Listen {{APACHE_PORT}}"
+    notify:
+    - "Restart service"
+  handlers:
+  - name: "Restart service"
+    service:
+      name: apache2
+      state: restarted
+      

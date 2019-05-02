@@ -1,0 +1,11 @@
+- hosts: web
+  vars:
+  - APACHE_PORT: 8080
+  - VAR_TWO: "In playbook"
+  vars_files:
+  - vars.yml
+  tasks:
+  - debug:
+      msg: "Hello There"
+  - debug:
+      msg: "VAR_TWO is {{VAR_TWO}}, VAR_THREE is {{VAR_THREE}}"
