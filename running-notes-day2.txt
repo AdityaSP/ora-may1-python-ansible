@@ -1217,3 +1217,223 @@ vagrant@anscontrol:~/may1$ vi variables.yml
 vagrant@anscontrol:~/may1$
 vagrant@anscontrol:~/may1$
 
+
+--------------------------------------------------------------------------------------------------
+vagrant@anscontrol:~/may1$ cat conditional.yml
+- hosts: web
+  become: true
+  gather_facts: no
+  tasks:
+  - name: "collect status"
+    command: "service apache2 status"
+    ignore_errors: true
+    register: output
+
+  - name: "start apache2"
+    command: "service apache2 start"
+    when: output.rc != 0 and 'inactive' in output.stdout
+vagrant@anscontrol:~/may1$ ansible-playbook conditional.yml
+
+PLAY ***************************************************************************
+
+TASK [collect status] **********************************************************
+changed: [192.168.90.2]
+ [WARNING]: Consider using service module rather than running service
+
+changed: [192.168.90.3]
+
+TASK [start apache2] ***********************************************************
+skipping: [192.168.90.3]
+skipping: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=1    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi conditional.yml
+vagrant@anscontrol:~/may1$ cd ..
+vagrant@anscontrol:~$ ls
+apr1  demo  mar18  may1
+vagrant@anscontrol:~$ cd apr1
+vagrant@anscontrol:~/apr1$ ls
+1.j2                 default.yml       local.yml         site.yml
+2.j2                 dev.yml           maintainence.yml  tasks_web.yml
+2parallel.yml        dynamicvars       mul.yml           thu.yml
+3.j2                 f1.txt            parallel.yml      v1_web.yml
+anscontrol.yml       handlers_web.yml  prod.yml          v2_web.yml
+ansible.cfg          handler.yml       project           variable.yml
+apt.conf             helloworld.yml    proxy             vars.yml
+conditional_run.yml  hosts             RedHat.yml        web.yml
+ctrl.yml             idem.yml          role_trial        with_items.yml
+db.yml               include.yml       secret
+Debian.yml           jinja_trial.yml   setup.yml
+vagrant@anscontrol:~/apr1$ vi maintainence.yml
+vagrant@anscontrol:~/apr1$
+vagrant@anscontrol:~/apr1$ cd ..
+vagrant@anscontrol:~$ ls
+apr1  demo  mar18  may1
+vagrant@anscontrol:~$ cd may1/
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg      helloworld.yml  variables.yml  web.yml
+conditional.yml  hosts           vars.yml
+vagrant@anscontrol:~/may1$ cat conditional.yml
+- hosts: web
+  become: true
+  gather_facts: no
+  tasks:
+  - name: "collect status"
+    command: "service apache2 status"
+    ignore_errors: true
+    register: output
+
+  - name: "start apache2"
+    command: "service apache2 start"
+    when: output.rc != 0 and 'inactive' in output.stdout
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg      helloworld.yml  variables.yml  web.yml
+conditional.yml  hosts           vars.yml
+vagrant@anscontrol:~/may1$ vi maintain.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat maintain.yml
+- hosts: web
+  become: true
+  tasks:
+  - name: "Stop Apache"
+    service:
+      name: apache2
+      state: stopped
+    tags:
+    - stop
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+    tags:
+    - start
+  - name: "Restart Apache"
+    service:
+      name: apache2
+      state: restarted
+    tags:
+    - restart
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags stop
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Stop Apache] *************************************************************
+changed: [192.168.90.2]
+changed: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi maintain.yml
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags stop
+
+PLAY ***************************************************************************
+
+TASK [Stop Apache] *************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=0    unreachable=0    failed=0
+192.168.90.3               : ok=1    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags start
+
+PLAY ***************************************************************************
+
+TASK [Start Apache] ************************************************************
+changed: [192.168.90.2]
+changed: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=1    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags restart
+
+PLAY ***************************************************************************
+
+TASK [Restart Apache] **********************************************************
+changed: [192.168.90.3]
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=1    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi maintain.yml
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags bounce
+
+PLAY ***************************************************************************
+
+TASK [Stop Apache] *************************************************************
+changed: [192.168.90.2]
+changed: [192.168.90.3]
+
+TASK [Start Apache] ************************************************************
+changed: [192.168.90.3]
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=2    unreachable=0    failed=0
+192.168.90.3               : ok=2    changed=2    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat maintain.yml
+- hosts: web
+  gather_facts: no
+  become: true
+  tasks:
+  - name: "Stop Apache"
+    service:
+      name: apache2
+      state: stopped
+    tags:
+    - stop
+    - bounce
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+    tags:
+    - start
+    - bounce
+  - name: "Restart Apache"
+    service:
+      name: apache2
+      state: restarted
+    tags:
+    - restart
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags bounce --limit 192.168.90.2
+
+PLAY ***************************************************************************
+
+TASK [Stop Apache] *************************************************************
+changed: [192.168.90.2]
+
+TASK [Start Apache] ************************************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=2    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook maintain.yml --tags start --limit 192.168.90.2
+
+PLAY ***************************************************************************
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=1    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
+
