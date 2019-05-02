@@ -293,3 +293,182 @@ vagrant@anscontrol:~/may1$ cat helloworld.yml
       state: touch
 vagrant@anscontrol:~/may1$ vi helloworld.yml
 vagrant@anscontrol:~/may1$
+
+
+----------------------------------------------------------------------------------------------
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  tasks:
+  - name: "Install apache2"
+    apt:
+      name: apache2
+      update_cache: yes
+vagrant@anscontrol:~/may1$ cat hosts
+[web]
+192.168.90.2
+
+[db]
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+[nodes]
+192.168.90.2
+192.168.90.3 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+
+vagrant@anscontrol:~/may1$ id
+uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lxd),115(lpadmin),116(sambashare)
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  tasks:
+  - name: "Install apache2"
+    apt:
+      name: apache2
+      update_cache: yes
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install apache2] *********************************************************
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install apache2] *********************************************************
+ok: [192.168.90.2]
+
+TASK [Install curl] ************************************************************
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ vi helloworld.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+changed: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+changed: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+fatal: [192.168.90.2]: FAILED! => {"changed": false, "failed": true, "msg": "unsupported parameter for module: enable"}
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=2    changed=0    unreachable=0    failed=1
+
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+changed: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.2               : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  become: true
+  tasks:
+  - name: "Install package"
+    apt:
+      name: "{{item}}"
+      update_cache: yes
+#      state: absent
+    with_items:
+    - apache2
+    - curl
+  - name: "Start Apache"
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+vagrant@anscontrol:~/may1$
