@@ -495,3 +495,207 @@ vagrant@anscontrol:~/may1/roletrial$ vi /etc/ansible/ansible.cfg
 vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy list
 - myownrole, (unknown version)
 vagrant@anscontrol:~/may1/roletrial$
+----------------------------------------------------------------------------------------------------------------
+vagrant@anscontrol:~/may1$ vi 1.j2
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat 1.j2
+Hello {{username}}
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+changed: [192.168.90.10]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=1    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat /tmp/1.txt
+Hello scott
+vagrant@anscontrol:~/may1$ cat 1.j2
+Hello {{username}}
+vagrant@anscontrol:~/may1$ cat temp1.yml
+- hosts: ctrl
+  gather_facts: no
+  vars:
+  - username: scott
+  tasks:
+  - name: "template"
+    template:
+      src: 1.j2
+      dest: /tmp/1.txt
+vagrant@anscontrol:~/may1$ vi 2.j2
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat 2.j2
+{% if env_type == "PROD" %}
+Listen {{ APACHE_PORT }}
+{% else %}
+Listen 90
+{% endif %}
+vagrant@anscontrol:~/may1$ cat temp1.yml
+- hosts: ctrl
+  gather_facts: no
+  vars:
+  - username: scott
+  - env_type: PROD
+  - APACHE_PORT: 8080
+  tasks:
+  - name: "template"
+    template:
+      src: 1.j2
+      dest: /tmp/1.txt
+  - name: "template 2"
+    template:
+      src: 2.j2
+      dest: /tmp/2.txt
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+changed: [192.168.90.10]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat /tmp/2.txt
+Listen 8080
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml --extra-vars="env_type=DEV"
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+changed: [192.168.90.10]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat /tmp/2.txt
+Listen 90
+vagrant@anscontrol:~/may1$ cat 2.j2
+{% if env_type == "PROD" %}
+Listen {{ APACHE_PORT }}
+{% else %}
+Listen 90
+{% endif %}
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml --extra-vars="env_type=DEV"
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+ok: [192.168.90.10]
+
+TASK [debug] *******************************************************************
+fatal: [192.168.90.10]: FAILED! => {"failed": true, "msg": "ERROR! 'server_port' is undefined"}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=1
+
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml --extra-vars="env_type=DEV"
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+ok: [192.168.90.10]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.10] => {
+    "msg": "80"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=3    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$ ls
+1.j2         commands.yml     maintain.yml  site.yml       web_handlers.yml
+2.j2         conditional.yml  proj1         temp1.yml      web_tasks.yml
+ansible.cfg  helloworld.yml   proj2         variables.yml  web_v1.yml
+app.yml      hosts            roletrial     vars.yml       web.yml
+vagrant@anscontrol:~/may1$ vi recipe.txt
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml --extra-vars="env_type=DEV"
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+ok: [192.168.90.10]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.10] => {
+    "msg": "80"
+}
+
+TASK [template] ****************************************************************
+changed: [192.168.90.10]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=4    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat /tmp/recipe.txt
+Ingredients:
+
+      apple
+      banana
+      grapes
+
+
+vagrant@anscontrol:~/may1$ cat recipe.txt
+Ingredients:
+
+  {% for fruit in fruits %}
+    {{ fruit }}
+  {% endfor %}
+
+vagrant@anscontrol:~/may1$ vi temp1.yml
+vagrant@anscontrol:~/may1$ ansible-playbook temp1.yml --extra-vars="env_type=DEV"
+
+PLAY ***************************************************************************
+
+TASK [template] ****************************************************************
+ok: [192.168.90.10]
+
+TASK [template 2] **************************************************************
+ok: [192.168.90.10]
+
+TASK [debug] *******************************************************************
+ok: [192.168.90.10] => {
+    "msg": "80"
+}
+
+TASK [template] ****************************************************************
+changed: [192.168.90.10]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=4    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat /tmp/recipe.txt
+Ingredients:
+
+      apple
+      banana
+      grapes
+      avacado
+
+
+vagrant@anscontrol:~/may1$
