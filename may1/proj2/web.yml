@@ -1,0 +1,5 @@
+- hosts: web
+  gather_facts: no
+  become: true
+  roles:
+  - role: apache2

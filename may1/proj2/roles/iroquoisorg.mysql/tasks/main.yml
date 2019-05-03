@@ -1,0 +1,79 @@
+---
+
+- name: Install Mysql package
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+   - "mysql-server-{{ mysql_version }}"
+   - python-mysqldb
+   - python-selinux
+
+- name: Create Mysql configuration file
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+  notify:
+  - restart mysql
+
+- name: Start Mysql Service
+  service: name=mysql state=started enabled=true
+
+- name: Set mysql root password for all root accounts when ansible_hostname != localhost
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_db_pass }}"
+  with_items:
+   - "{{ansible_hostname}}"
+   - 127.0.0.1
+   - ::1
+   - localhost
+  when: ansible_hostname != 'localhost'
+
+- name: Set mysql root password for all root accounts when ansible_hostname == localhost
+  mysql_user:
+    user: root
+    host: "{{item}}"
+    password: "{{mysql_root_password}}"
+  with_items:
+   - 127.0.0.1
+   - ::1
+   - localhost
+  when: ansible_hostname == 'localhost'
+
+- name: Copy .my.cnf file with root password credentials
+  template:
+    src: root_dot_my.cnf.j2
+    dest: ~/.my.cnf
+    mode: 0600
+    owner: root
+
+- name: Remove anonymous MySQL server user
+  mysql_user:
+    name: ""
+    host: "{{item}}"
+    state: absent
+  with_items:
+    - "{{ansible_hostname}}"
+    - localhost
+
+- name: Remove the test database
+  mysql_db:
+    name: test
+    state: absent
+
+- name: Create databases
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+    collation: utf8_general_ci
+  with_items: "{{ mysql_databases }}"
+
+- name: Create users
+  mysql_user:
+    name: "{{ item.name }}"
+    host: "{{ item.host|default('localhost') }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.database }}.*:ALL"
+  with_items: "{{ mysql_users }}"

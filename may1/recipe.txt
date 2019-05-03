@@ -1,0 +1,6 @@
+Ingredients:
+
+  {% for fruit in fruits %}
+    {{ fruit }} 
+  {% endfor %}
+

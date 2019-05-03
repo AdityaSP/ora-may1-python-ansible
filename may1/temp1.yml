@@ -1,0 +1,26 @@
+- hosts: ctrl
+  gather_facts: no
+  vars:
+  - username: scott
+  - env_type: PROD
+  - APACHE_PORT: 8080
+  - fruits:
+      - apple
+      - banana
+      - grapes
+      - avacado
+  tasks:
+  - name: "template"
+    template:
+      src: 1.j2
+      dest: /tmp/1.txt 
+  - name: "template 2"
+    template:
+      src: 2.j2
+      dest: /tmp/2.txt 
+  - debug:
+      msg: "{{ server_port | default(80)}}"
+  - name: "template "
+    template:
+      src: recipe.txt 
+      dest: /tmp/recipe.txt 

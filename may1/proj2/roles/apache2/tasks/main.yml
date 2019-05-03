@@ -1,0 +1,23 @@
+- name: "Update cache"
+  apt:
+   update_cache: yes
+   cache_valid_time: 36000
+- name: "Install package"
+  apt:
+    name: "{{item}}"
+    update_cache: no
+  with_items:
+  - apache2
+  - curl
+- name: "Start Apache"
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+- name: "Change port"
+  lineinfile:
+    dest: /etc/apache2/ports.conf
+    regexp: "^Listen"
+    line: "Listen {{APACHE_PORT}}"
+  notify:
+  - "Restart apache"
