@@ -1,0 +1,497 @@
+login as: vagrant
+vagrant@192.168.90.10's password:
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-131-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+103 packages can be updated.
+69 updates are security updates.
+
+
+Last login: Thu May  2 16:15:59 2019 from 192.168.90.1
+vagrant@anscontrol:~$ cd may1/
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg   conditional.yml  hosts         variables.yml  web.yml
+commands.yml  helloworld.yml   maintain.yml  vars.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg   conditional.yml  hosts         variables.yml  web.yml
+commands.yml  helloworld.yml   maintain.yml  vars.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg   conditional.yml  hosts         variables.yml  web.yml
+commands.yml  helloworld.yml   maintain.yml  vars.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ cp web.yml web_v1.yml
+vagrant@anscontrol:~/may1$ cp web.yml web_tasks.yml
+vagrant@anscontrol:~/may1$ vi web_tasks.yml
+vagrant@anscontrol:~/may1$ cat web_tasks.yml
+- name: "Update cache"
+  apt:
+   update_cache: yes
+   cache_valid_time: 36000
+- name: "Install package"
+  apt:
+    name: "{{item}}"
+    update_cache: no
+  with_items:
+  - apache2
+  - curl
+- name: "Start Apache"
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+- name: "Change port"
+  lineinfile:
+    dest: /etc/apache2/ports.conf
+    regexp: "^Listen"
+    line: "Listen {{APACHE_PORT}}"
+  notify:
+  - "Restart apache"
+- name: "Deploy code"
+  copy:
+    src: /tmp/code/mypage.html
+    dest: /var/www/html/mypage.html
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ vi web_handlers.yml
+vagrant@anscontrol:~/may1$ ls web.yml web_tasks.yml web_handlers.yml
+web_handlers.yml  web_tasks.yml  web.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ ansible-playbook web.yml
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.10]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.10]
+
+TASK [Checkout] ****************************************************************
+changed: [192.168.90.10]
+
+PLAY ***************************************************************************
+
+TASK [include] *****************************************************************
+included: /home/vagrant/may1/web_tasks.yml for 192.168.90.2, 192.168.90.3
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.3]
+ok: [192.168.90.2]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+ok: [192.168.90.3] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.3]
+ok: [192.168.90.2]
+
+TASK [Change port] *************************************************************
+changed: [192.168.90.2]
+changed: [192.168.90.3]
+
+TASK [Deploy code] *************************************************************
+ok: [192.168.90.3]
+ok: [192.168.90.2]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=3    changed=1    unreachable=0    failed=0
+192.168.90.2               : ok=6    changed=1    unreachable=0    failed=0
+192.168.90.3               : ok=6    changed=1    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg      helloworld.yml  variables.yml     web_tasks.yml
+commands.yml     hosts           vars.yml          web_v1.yml
+conditional.yml  maintain.yml    web_handlers.yml  web.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ vi app.yml
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ vi app.yml
+vagrant@anscontrol:~/may1$ vi web_tasks.yml
+vagrant@anscontrol:~/may1$ vi app.yml
+vagrant@anscontrol:~/may1$ vi web_tasks.yml
+vagrant@anscontrol:~/may1$ vi site.yml
+vagrant@anscontrol:~/may1$ ansible-playbook site.yml
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.10]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.10]
+
+TASK [Checkout] ****************************************************************
+ok: [192.168.90.10]
+
+PLAY ***************************************************************************
+
+TASK [include] *****************************************************************
+included: /home/vagrant/may1/web_tasks.yml for 192.168.90.2, 192.168.90.3
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+ok: [192.168.90.3] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Change port] *************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.10]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.10]
+
+TASK [Checkout] ****************************************************************
+ok: [192.168.90.10]
+
+PLAY ***************************************************************************
+
+TASK [Deploy code] *************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=6    changed=0    unreachable=0    failed=0
+192.168.90.2               : ok=6    changed=0    unreachable=0    failed=0
+192.168.90.3               : ok=6    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi site.yml
+vagrant@anscontrol:~/may1$ vi site.yml
+vagrant@anscontrol:~/may1$ ansible-playbook site.yml
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.10]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.10]
+
+TASK [Checkout] ****************************************************************
+ok: [192.168.90.10]
+
+PLAY ***************************************************************************
+
+TASK [Deploy code] *************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+PLAY ***************************************************************************
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.10]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.10]
+
+TASK [Checkout] ****************************************************************
+ok: [192.168.90.10]
+
+PLAY ***************************************************************************
+
+TASK [include] *****************************************************************
+included: /home/vagrant/may1/web_tasks.yml for 192.168.90.2, 192.168.90.3
+
+TASK [Update cache] ************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Install package] *********************************************************
+ok: [192.168.90.2] => (item=[u'apache2', u'curl'])
+ok: [192.168.90.3] => (item=[u'apache2', u'curl'])
+
+TASK [Start Apache] ************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+TASK [Change port] *************************************************************
+ok: [192.168.90.2]
+ok: [192.168.90.3]
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=6    changed=0    unreachable=0    failed=0
+192.168.90.2               : ok=6    changed=0    unreachable=0    failed=0
+192.168.90.3               : ok=6    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls site.yml
+site.yml
+vagrant@anscontrol:~/may1$ cat site.yml
+- include: app.yml
+- include: web.yml
+vagrant@anscontrol:~/may1$ cat app.yml
+- hosts: ctrl
+  gather_facts: no
+  tasks:
+  - name: "Update cache"
+    become: yes
+    apt:
+     update_cache: yes
+     cache_valid_time: 36000
+  - name: "Install package"
+    become: yes
+    apt:
+      name: git
+      update_cache: no
+  - name: "Checkout"
+    git:
+      repo: "https://github.com/AdityaSP/htmlonly"
+      dest: "/tmp/code"
+- hosts: web
+  gather_facts: no
+  tasks:
+  - name: "Deploy code"
+    copy:
+      src: /tmp/code/mypage.html
+      dest: /var/www/html/mypage.html
+
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: ctrl
+  gather_facts: no
+  tasks:
+  - name: "Update cache"
+    become: yes
+    apt:
+     update_cache: yes
+     cache_valid_time: 36000
+  - name: "Install package"
+    become: yes
+    apt:
+      name: git
+      update_cache: no
+  - name: "Checkout"
+    git:
+      repo: "https://github.com/AdityaSP/htmlonly"
+      dest: "/tmp/code"
+
+- hosts: web
+  gather_facts: no
+  vars:
+  - APACHE_PORT: 80
+  become: true
+  tasks:
+  - include: web_tasks.yml
+  handlers:
+  - include: web_handlers.yml
+vagrant@anscontrol:~/may1$ vi site.yml
+vagrant@anscontrol:~/may1$ vi web
+vagrant@anscontrol:~/may1$ vi web.yml
+vagrant@anscontrol:~/may1$ cat web
+cat: web: No such file or directory
+vagrant@anscontrol:~/may1$ cat web.yml
+- hosts: web
+  gather_facts: no
+  vars:
+  - APACHE_PORT: 80
+  become: true
+  tasks:
+  - include: web_tasks.yml
+  handlers:
+  - include: web_handlers.yml
+vagrant@anscontrol:~/may1$ cat app.yml
+- hosts: ctrl
+  gather_facts: no
+  tasks:
+  - name: "Update cache"
+    become: yes
+    apt:
+     update_cache: yes
+     cache_valid_time: 36000
+  - name: "Install package"
+    become: yes
+    apt:
+      name: git
+      update_cache: no
+  - name: "Checkout"
+    git:
+      repo: "https://github.com/AdityaSP/htmlonly"
+      dest: "/tmp/code"
+- hosts: web
+  gather_facts: no
+  tasks:
+  - name: "Deploy code"
+    copy:
+      src: /tmp/code/mypage.html
+      dest: /var/www/html/mypage.html
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ls
+ansible.cfg   conditional.yml  maintain.yml   vars.yml          web_v1.yml
+app.yml       helloworld.yml   site.yml       web_handlers.yml  web.yml
+commands.yml  hosts            variables.yml  web_tasks.yml
+vagrant@anscontrol:~/may1$ mkdir proj1
+vagrant@anscontrol:~/may1$ cd proj1/
+vagrant@anscontrol:~/may1/proj1$ cd ..
+vagrant@anscontrol:~/may1$ cp ansible.cfg hosts web.yml web_tasks.yml web_handlers.yml site.yml app.yml proj1/
+vagrant@anscontrol:~/may1$ cd proj1/
+vagrant@anscontrol:~/may1/proj1$ ls
+ansible.cfg  app.yml  hosts  site.yml  web_handlers.yml  web_tasks.yml  web.yml
+vagrant@anscontrol:~/may1/proj1$ cd ..
+vagrant@anscontrol:~/may1$ mkdir roletrial
+vagrant@anscontrol:~/may1$ cd roletrial/
+vagrant@anscontrol:~/may1/roletrial$ cp ../ansible.cfg ../hosts .
+vagrant@anscontrol:~/may1/roletrial$ ls
+ansible.cfg  hosts
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy init -p roles/ myownrole
+- myownrole was created successfully
+vagrant@anscontrol:~/may1/roletrial$
+vagrant@anscontrol:~/may1/roletrial$ ls -ltr
+total 12
+-rw-rw-r-- 1 vagrant vagrant  284 May  3 15:40 hosts
+-rw-r--r-- 1 vagrant vagrant   34 May  3 15:40 ansible.cfg
+drwxrwxr-x 3 vagrant vagrant 4096 May  3 15:41 roles
+vagrant@anscontrol:~/may1/roletrial$ tree roles
+roles
+└── myownrole
+    ├── defaults
+    │   └── main.yml
+    ├── files
+    ├── handlers
+    │   └── main.yml
+    ├── meta
+    │   └── main.yml
+    ├── README.md
+    ├── tasks
+    │   └── main.yml
+    ├── templates
+    ├── tests
+    │   ├── inventory
+    │   └── test.yml
+    └── vars
+        └── main.yml
+
+9 directories, 8 files
+vagrant@anscontrol:~/may1/roletrial$ ls
+ansible.cfg  hosts  roles
+vagrant@anscontrol:~/may1/roletrial$ cd roles/
+vagrant@anscontrol:~/may1/roletrial/roles$ ls
+myownrole
+vagrant@anscontrol:~/may1/roletrial/roles$ vi myownrole/tasks/main.yml
+vagrant@anscontrol:~/may1/roletrial/roles$
+vagrant@anscontrol:~/may1/roletrial/roles$ cd myownrole/defaults/main.yml
+-bash: cd: myownrole/defaults/main.yml: Not a directory
+vagrant@anscontrol:~/may1/roletrial/roles$ vi myownrole/defaults/main.yml
+vagrant@anscontrol:~/may1/roletrial/roles$ vi myownrole/vars/main.yml
+vagrant@anscontrol:~/may1/roletrial/roles$ vi myownrole/tasks/main.yml
+vagrant@anscontrol:~/may1/roletrial/roles$ cd ..
+vagrant@anscontrol:~/may1/roletrial$ ls
+ansible.cfg  hosts  roles
+vagrant@anscontrol:~/may1/roletrial$ vi site.yml
+vagrant@anscontrol:~/may1/roletrial$ cat site.yml
+- hosts: ctrl
+  gather_facts: no
+  roles:
+  - role: myownrole
+vagrant@anscontrol:~/may1/roletrial$ ansible-playbook site.yml
+
+PLAY ***************************************************************************
+
+TASK [myownrole : debug] *******************************************************
+ok: [192.168.90.10] => {
+    "msg": "From myownrole/tasks/main.yml"
+}
+
+TASK [myownrole : debug] *******************************************************
+ok: [192.168.90.10] => {
+    "msg": "varone: from defaults vartwo: From vars/main.yml"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1/roletrial$
+vagrant@anscontrol:~/may1/roletrial$ #ansible-galaxy init -p roles/ myownrole
+vagrant@anscontrol:~/may1/roletrial$ tree roles/
+roles/
+└── myownrole
+    ├── defaults
+    │   └── main.yml
+    ├── files
+    ├── handlers
+    │   └── main.yml
+    ├── meta
+    │   └── main.yml
+    ├── README.md
+    ├── tasks
+    │   └── main.yml
+    ├── templates
+    ├── tests
+    │   ├── inventory
+    │   └── test.yml
+    └── vars
+        └── main.yml
+
+9 directories, 8 files
+vagrant@anscontrol:~/may1/roletrial$ cat roles/myownrole/defaults/main.yml
+---
+# defaults file for myownrole
+VAR_ONE: "from defaults"
+VAR_TWO: "from defaults"
+vagrant@anscontrol:~/may1/roletrial$ cat roles/myownrole/vars/main.yml
+---
+# vars file for myownrole
+VAR_TWO: "From vars/main.yml"
+vagrant@anscontrol:~/may1/roletrial$ cat roles/myownrole/tasks/main.yml
+---
+# tasks file for myownrole
+- debug:
+    msg: "From myownrole/tasks/main.yml"
+- debug:
+    msg: "varone: {{VAR_ONE}} vartwo: {{VAR_TWO}}"
+vagrant@anscontrol:~/may1/roletrial$ cat site.yml
+- hosts: ctrl
+  gather_facts: no
+  roles:
+  - role: myownrole
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy
+ansible.cfg  hosts        roles/       site.yml
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy --help
+Usage: ansible-galaxy [delete|import|info|init|install|list|login|remove|search|setup] [--help] [options] ...
+
+Options:
+  -h, --help     show this help message and exit
+  -v, --verbose  verbose mode (-vvv for more, -vvvv to enable connection
+                 debugging)
+  --version      show program's version number and exit
+ERROR! Missing required action
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy list
+Usage: ansible-galaxy list [role_name]
+
+Options:
+  -h, --help            show this help message and exit
+  -p ROLES_PATH, --roles-path=ROLES_PATH
+                        The path to the directory containing your roles. The
+                        default is the roles_path configured in your
+                        ansible.cfg file (/etc/ansible/roles if not
+                        configured)
+  -v, --verbose         verbose mode (-vvv for more, -vvvv to enable
+                        connection debugging)
+  --version             show program's version number and exit
+ERROR! - the path /etc/ansible/roles does not exist. Please specify a valid path with --roles-path
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy list -p roles
+- myownrole, (unknown version)
+vagrant@anscontrol:~/may1/roletrial$ vi /etc/ansible/ansible.cfg
+vagrant@anscontrol:~/may1/roletrial$ vi ansible.cfg
+vagrant@anscontrol:~/may1/roletrial$ vi /etc/ansible/ansible.cfg
+vagrant@anscontrol:~/may1/roletrial$ ansible-galaxy list
+- myownrole, (unknown version)
+vagrant@anscontrol:~/may1/roletrial$
