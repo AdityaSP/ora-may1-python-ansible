@@ -1,0 +1,8 @@
+- hosts: ctrl
+  vars_files:
+  - var_sec.yml
+  - var_clear.yml
+  tasks:
+  - name: "use an encrypted passowrd"
+    debug:
+      msg: "{{db_user}}/{{db_pass}}"
