@@ -699,3 +699,347 @@ Ingredients:
 
 
 vagrant@anscontrol:~/may1$
+
+
+-------------------------------------------------------------------------------------------
+vagrant@anscontrol:~/may1$ cat var_sec.yml
+db_username: scott
+db_password: tiger
+vagrant@anscontrol:~/may1$ cat use_sec.yml
+- hosts: ctrl
+  vars_files:
+  - var_sec.yml
+  tasks:
+  - name: "use an encrypted passowrd"
+    debug:
+      msg: {{db_password}}
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml
+ERROR! Syntax Error while loading YAML.
+
+
+The error appears to have been in '/home/vagrant/may1/use_sec.yml': line 7, column 13, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+    debug:
+      msg: {{db_password}}
+            ^ here
+We could be wrong, but this one looks like it might be an issue with
+missing quotes.  Always quote template expression brackets when they
+start a value. For instance:
+
+    with_items:
+      - {{ foo }}
+
+Should be written as:
+
+    with_items:
+      - "{{ foo }}"
+
+vagrant@anscontrol:~/may1$ vi use_sec.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-vault encrypt var_sec.yml
+New Vault password:
+Confirm New Vault password:
+Encryption successful
+vagrant@anscontrol:~/may1$ cat var_sec.yml
+$ANSIBLE_VAULT;1.1;AES256
+30613765383061316232646666613064386430363265626230353063643562346263666665313365
+6331393330623231353937633234636263366565363238340a636133333137633663353562613933
+62656566326564383236643434333630633832633563616662363837663338643030383535356464
+3462333662333365620a623336643464656132323563383137313834386161393337363764396634
+37343432303437396266316362363662306533633063616161623037373536353066313233323432
+3562323564333763623036313835663964663535363164353966
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml
+ERROR! Decryption failed
+vagrant@anscontrol:~/may1$ ansible-playbook --help
+Usage: ansible-playbook playbook.yml
+
+Options:
+  --ask-become-pass     ask for privilege escalation password
+  -k, --ask-pass        ask for connection password
+  --ask-su-pass         ask for su password (deprecated, use become)
+  -K, --ask-sudo-pass   ask for sudo password (deprecated, use become)
+  --ask-vault-pass      ask for vault password
+  -b, --become          run operations with become (nopasswd implied)
+  --become-method=BECOME_METHOD
+                        privilege escalation method to use (default=sudo),
+                        valid choices: [ sudo | su | pbrun | pfexec | runas |
+                        doas ]
+  --become-user=BECOME_USER
+                        run operations as this user (default=root)
+  -C, --check           don't make any changes; instead, try to predict some
+                        of the changes that may occur
+  -c CONNECTION, --connection=CONNECTION
+                        connection type to use (default=smart)
+  -D, --diff            when changing (small) files and templates, show the
+                        differences in those files; works great with --check
+  -e EXTRA_VARS, --extra-vars=EXTRA_VARS
+                        set additional variables as key=value or YAML/JSON
+  --flush-cache         clear the fact cache
+  --force-handlers      run handlers even if a task fails
+  -f FORKS, --forks=FORKS
+                        specify number of parallel processes to use
+                        (default=5)
+  -h, --help            show this help message and exit
+  -i INVENTORY, --inventory-file=INVENTORY
+                        specify inventory host path (default=hosts) or comma
+                        separated host list
+  -l SUBSET, --limit=SUBSET
+                        further limit selected hosts to an additional pattern
+  --list-hosts          outputs a list of matching hosts; does not execute
+                        anything else
+  --list-tags           list all available tags
+  --list-tasks          list all tasks that would be executed
+  -M MODULE_PATH, --module-path=MODULE_PATH
+                        specify path(s) to module library (default=None)
+  --new-vault-password-file=NEW_VAULT_PASSWORD_FILE
+                        new vault password file for rekey
+  --output=OUTPUT_FILE  output file name for encrypt or decrypt; use - for
+                        stdout
+  --private-key=PRIVATE_KEY_FILE, --key-file=PRIVATE_KEY_FILE
+                        use this file to authenticate the connection
+  --scp-extra-args=SCP_EXTRA_ARGS
+                        specify extra arguments to pass to scp only (e.g. -l)
+  --sftp-extra-args=SFTP_EXTRA_ARGS
+                        specify extra arguments to pass to sftp only (e.g. -f,
+                        -l)
+  --skip-tags=SKIP_TAGS
+                        only run plays and tasks whose tags do not match these
+                        values
+  --ssh-common-args=SSH_COMMON_ARGS
+                        specify common arguments to pass to sftp/scp/ssh (e.g.
+                        ProxyCommand)
+  --ssh-extra-args=SSH_EXTRA_ARGS
+                        specify extra arguments to pass to ssh only (e.g. -R)
+  --start-at-task=START_AT_TASK
+                        start the playbook at the task matching this name
+  --step                one-step-at-a-time: confirm each task before running
+  -S, --su              run operations with su (deprecated, use become)
+  -R SU_USER, --su-user=SU_USER
+                        run operations with su as this user (default=root)
+                        (deprecated, use become)
+  -s, --sudo            run operations with sudo (nopasswd) (deprecated, use
+                        become)
+  -U SUDO_USER, --sudo-user=SUDO_USER
+                        desired sudo user (default=root) (deprecated, use
+                        become)
+  --syntax-check        perform a syntax check on the playbook, but do not
+                        execute it
+  -t TAGS, --tags=TAGS  only run plays and tasks tagged with these values
+  -T TIMEOUT, --timeout=TIMEOUT
+                        override the connection timeout in seconds
+                        (default=10)
+  -u REMOTE_USER, --user=REMOTE_USER
+                        connect as this user (default=None)
+  --vault-password-file=VAULT_PASSWORD_FILE
+                        vault password file
+  -v, --verbose         verbose mode (-vvv for more, -vvvv to enable
+                        connection debugging)
+  --version             show program's version number and exit
+vagrant@anscontrol:~/may1$ ansible-playbook --help | grep ask
+  --ask-become-pass     ask for privilege escalation password
+  -k, --ask-pass        ask for connection password
+  --ask-su-pass         ask for su password (deprecated, use become)
+  -K, --ask-sudo-pass   ask for sudo password (deprecated, use become)
+  --ask-vault-pass      ask for vault password
+  --force-handlers      run handlers even if a task fails
+  --list-tasks          list all tasks that would be executed
+                        only run plays and tasks whose tags do not match these
+  --start-at-task=START_AT_TASK
+                        start the playbook at the task matching this name
+  --step                one-step-at-a-time: confirm each task before running
+  -t TAGS, --tags=TAGS  only run plays and tasks tagged with these values
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --ask-valut-pass
+Usage: ansible-playbook playbook.yml
+
+ansible-playbook: error: no such option: --ask-valut-pass
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --ask-vault-pass
+Vault password:
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat var_sec.yml
+$ANSIBLE_VAULT;1.1;AES256
+30613765383061316232646666613064386430363265626230353063643562346263666665313365
+6331393330623231353937633234636263366565363238340a636133333137633663353562613933
+62656566326564383236643434333630633832633563616662363837663338643030383535356464
+3462333662333365620a623336643464656132323563383137313834386161393337363764396634
+37343432303437396266316362363662306533633063616161623037373536353066313233323432
+3562323564333763623036313835663964663535363164353966
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --ask-vault-pass
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --ask-vault-pass
+Vault password:
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi pass.txt
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --vault-password-file pass.txt
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ vi getpass.sh
+vagrant@anscontrol:~/may1$ chmod +x getpass.sh
+vagrant@anscontrol:~/may1$ ./getpass.sh
+ansiblevagrant@anscontrol:~/may1$ vi getpass.sh
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ ./getpass.sh
+ansiblevagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --vault-password-file getpass.sh
+ERROR! The vault password file /home/vagrant/may1/p-file was not found
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --vault-password-file ./getpass.sh
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ ansible-vault create newsec.yml
+New Vault password:
+Confirm New Vault password:
+vagrant@anscontrol:~/may1$ cat newsec.yml
+$ANSIBLE_VAULT;1.1;AES256
+63306666643863616363376437643230343738613463646664626633613462336661343234326331
+3662643564626333643665323035626138376561396630310a333964303338666164633466376439
+66316532653032353263373464363438663434643537326637366361636230393638646534343063
+3233643539353134380a323739356635326333383334653865323366303539343366363364353738
+3765
+vagrant@anscontrol:~/may1$ ls
+1.j2             getpass.sh      proj1       use_sec.yml       web_v1.yml
+2.j2             helloworld.yml  proj2       variables.yml     web.yml
+ansible.cfg      hosts           recipe.txt  var_sec.yml
+app.yml          maintain.yml    roletrial   vars.yml
+commands.yml     newsec.yml      site.yml    web_handlers.yml
+conditional.yml  pass.txt        temp1.yml   web_tasks.yml
+vagrant@anscontrol:~/may1$ cat newsec.yml
+$ANSIBLE_VAULT;1.1;AES256
+63306666643863616363376437643230343738613463646664626633613462336661343234326331
+3662643564626333643665323035626138376561396630310a333964303338666164633466376439
+66316532653032353263373464363438663434643537326637366361636230393638646534343063
+3233643539353134380a323739356635326333383334653865323366303539343366363364353738
+3765
+vagrant@anscontrol:~/may1$ cat use_sec.yml
+- hosts: ctrl
+  vars_files:
+  - var_sec.yml
+  tasks:
+  - name: "use an encrypted passowrd"
+    debug:
+      msg: "{{db_password}}"
+vagrant@anscontrol:~/may1$ cat var_sec.yml
+$ANSIBLE_VAULT;1.1;AES256
+30613765383061316232646666613064386430363265626230353063643562346263666665313365
+6331393330623231353937633234636263366565363238340a636133333137633663353562613933
+62656566326564383236643434333630633832633563616662363837663338643030383535356464
+3462333662333365620a623336643464656132323563383137313834386161393337363764396634
+37343432303437396266316362363662306533633063616161623037373536353066313233323432
+3562323564333763623036313835663964663535363164353966
+vagrant@anscontrol:~/may1$ vi var_clear.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ cat var_clear.yml
+db_user: {{db_username}}
+db_pass: {{db_password}}
+vagrant@anscontrol:~/may1$ vi var_clear.yml
+vagrant@anscontrol:~/may1$
+vagrant@anscontrol:~/may1$ vi use_sec.yml
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --vault-password-file ./getpass.sh
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$ cat var_sec.yml
+$ANSIBLE_VAULT;1.1;AES256
+30613765383061316232646666613064386430363265626230353063643562346263666665313365
+6331393330623231353937633234636263366565363238340a636133333137633663353562613933
+62656566326564383236643434333630633832633563616662363837663338643030383535356464
+3462333662333365620a623336643464656132323563383137313834386161393337363764396634
+37343432303437396266316362363662306533633063616161623037373536353066313233323432
+3562323564333763623036313835663964663535363164353966
+vagrant@anscontrol:~/may1$ cat var_clear.yml
+db_user: "{{db_username}}"
+db_pass: "{{db_password}}"
+vagrant@anscontrol:~/may1$ vi use_sec.yml
+vagrant@anscontrol:~/may1$ ansible-playbook use_sec.yml --vault-password-file ./getpass.sh
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [192.168.90.10]
+
+TASK [use an encrypted passowrd] ***********************************************
+ok: [192.168.90.10] => {
+    "msg": "scott/tiger"
+}
+
+PLAY RECAP *********************************************************************
+192.168.90.10              : ok=2    changed=0    unreachable=0    failed=0
+
+vagrant@anscontrol:~/may1$
