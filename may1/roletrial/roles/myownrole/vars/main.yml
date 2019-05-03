@@ -1,0 +1,3 @@
+---
+# vars file for myownrole
+VAR_TWO: "From vars/main.yml"

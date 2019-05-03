@@ -1,0 +1,6 @@
+---
+# tasks file for myownrole
+- debug:
+    msg: "From myownrole/tasks/main.yml"
+- debug:
+    msg: "varone: {{VAR_ONE}} vartwo: {{VAR_TWO}}"

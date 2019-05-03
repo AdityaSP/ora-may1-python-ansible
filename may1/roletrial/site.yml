@@ -1,0 +1,4 @@
+- hosts: ctrl
+  gather_facts: no
+  roles:
+  - role: myownrole 

@@ -1,0 +1,4 @@
+---
+# defaults file for myownrole
+VAR_ONE: "from defaults"
+VAR_TWO: "from defaults"

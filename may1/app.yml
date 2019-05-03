@@ -1,0 +1,25 @@
+- hosts: ctrl
+  gather_facts: no
+  tasks:
+  - name: "Update cache"
+    become: yes
+    apt:
+     update_cache: yes
+     cache_valid_time: 36000
+  - name: "Install package"
+    become: yes
+    apt:
+      name: git
+      update_cache: no
+  - name: "Checkout"
+    git:
+      repo: "https://github.com/AdityaSP/htmlonly"
+      dest: "/tmp/code"
+- hosts: web
+  gather_facts: no
+  tasks:
+  - name: "Deploy code"
+    copy:
+      src: /tmp/code/mypage.html
+      dest: /var/www/html/mypage.html
+
